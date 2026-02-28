@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Question</title>
+
+<style>
+body{
+    text-align:center;
+    font-family:Arial, sans-serif;
+    margin:0;
+    padding:0;
+    background:#ffc0cb; /* pinkish base */
+    overflow:hidden;
+    transition: background 0.2s;
+}
+
+h1{
+    font-size:50px;
+    font-weight:bold;
+    margin-top:80px;
+}
+
+h2{
+    font-size:24px;
+    font-weight:bold;
+    margin-top:20px;
+}
+
+button{
+    padding:15px 35px;
+    font-size:20px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    position:absolute;
+}
+
+#yes{
+    background:#4CAF50;
+    color:white;
+    left:40%;
+    top:55%;
+    transition: transform 0.2s;
+}
+
+#no{
+    background:#f44336;
+    color:white;
+    left:55%;
+    top:55%;
+    transition:left .15s ease, top .15s ease;
+}
+
+#msg{
+    margin-top:20px;
+    font-size:22px;
+    height:30px;
+}
+
+.floatingHeart{
+    position:fixed;
+    color:pink;
+    animation:floatUp 20s linear forwards;
+    pointer-events:none;
+}
+
+@keyframes floatUp{
+    0%{transform:translateY(0); opacity:1;}
+    100%{transform:translateY(-200px); opacity:0;}
+}
+</style>
+</head>
+
+<body>
+
+<div id="content">
+    <h1>Hold on.. before anything</h1>
+    <h2>so… can you afford to keep me full tomorrow?</h2>
+    <h3>(dare to say no..!)</h3>
+
+    <div id="msg"></div>
+
+    <button id="yes">YES</button>
+    <button id="no">NO</button>
+</div>
+
+<!-- AUDIO FILES -->
+<audio id="boing" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+<audio id="cheer" src="https://www.soundjay.com/human/cheer-01.wav"></audio>
+<audio id="pop" src="https://www.soundjay.com/button/button-16.wav"></audio>
+<audio id="birthdaySong" src="birthday.mp3" preload="auto" loop></audio>
+
+<script>
+// === ELEMENTS ===
+const contentDiv = document.getElementById("content");
+const yes = document.getElementById("yes");
+const noBtn = document.getElementById("no");
+const msg = document.getElementById("msg");
+const boing = document.getElementById("boing");
+const cheer = document.getElementById("cheer");
+const pop = document.getElementById("pop");
+const birthdaySong = document.getElementById("birthdaySong");
+
+// === NO BUTTON DODGE ===
+const messages=[
+    "Are you sure? 🤨",
+    "Think again 😏",
+    "Wrong choice 😌",
+    "You can’t catch me 😜",
+    "No option disabled 😆",
+    "Try harder 😂"
+];
+
+function moveNoButton(e){
+    boing.play();
+    const rect = noBtn.getBoundingClientRect();
+    const cursorX = e.clientX || e.touches[0].clientX;
+    const cursorY = e.clientY || e.touches[0].clientY;
+
+    let dx = rect.x + rect.width/2 - cursorX;
+    let dy = rect.y + rect.height/2 - cursorY;
+
+    let distance = Math.sqrt(dx*dx + dy*dy);
+    let factor = Math.min(5, 150 / (distance + 10));
+
+    let newX = rect.x + dx * factor;
+    let newY = rect.y + dy * factor;
+
+    newX = Math.max(0, Math.min(window.innerWidth-100, newX));
+    newY = Math.max(0, Math.min(window.innerHeight-50, newY));
+
+    noBtn.style.left = newX + "px";
+    noBtn.style.top = newY + "px";
+
+    msg.innerText = messages[Math.floor(Math.random()*messages.length)];
+}
+
+noBtn.addEventListener("mousemove", moveNoButton);
+noBtn.addEventListener("touchstart", moveNoButton);
+
+// === YES BUTTON SCALE ===
+let scale = 1;
+yes.addEventListener("mouseover", ()=>{
+    scale += 0.15;
+    yes.style.transform = `scale(${scale})`;
+});
+yes.addEventListener("mouseleave", ()=>{
+    scale = 1;
+    yes.style.transform = `scale(1)`;
+});
+
+// === BACKGROUND REACT ===
+document.addEventListener("mousemove",(e)=>{
+    let x = e.clientX/window.innerWidth*100;
+    let y = e.clientY/window.innerHeight*100;
+    document.body.style.background = `rgb(${255}, ${150+x/2}, ${180+y/2})`;
+});
+
+// === YES CLICK CELEBRATION ===
+yes.addEventListener("click", ()=>{
+    cheer.play();             
+    birthdaySong.play();      // now will loop and continue
+    contentDiv.innerHTML=`
+        <h1>HAPPY BIRTHDYYYY! 🥳✨</h1>
+        <h2>Don't forget....I expect nothing less than 'EXTRA'</h2>
+    `;
+    partyBlastTriple(50);     
+});
+
+// === TRIPLE PARTY POPPERS ===
+function partyBlastTriple(count){
+    for(let i=0;i<count;i++){
+        let x = Math.random()*window.innerWidth*0.9 + window.innerWidth*0.05;
+        let y = Math.random()*window.innerHeight*0.5 + window.innerHeight*0.1;
+
+        for(let blast=0; blast<3; blast++){
+            setTimeout(()=>{
+                pop.play();
+                singleBlast(x, y);
+                setTimeout(()=>floatingHeart(x, y), 2000);
+            }, blast*500);
+        }
+    }
+}
+
+// === SINGLE BLAST CONFETTI ===
+function singleBlast(x, y){
+    for(let j=0;j<20;j++){
+        let c = document.createElement("div");
+        c.style.position="fixed";
+        c.style.width="10px";
+        c.style.height="10px";
+        c.style.background = `hsl(${Math.random()*360},100%,50%)`;
+        c.style.left = x + "px";
+        c.style.top = y + "px";
+        c.style.borderRadius = "50%";
+
+        let angle = Math.random()*2*Math.PI;
+        let speed = Math.random()*15 + 5;
+        let dx = Math.cos(angle)*speed;
+        let dy = Math.sin(angle)*speed;
+
+        c.animate([
+            {transform:`translate(0px,0px)`},
+            {transform:`translate(${dx*10}px, ${dy*10}px)`, opacity:0}
+        ], {duration:1000, easing:'ease-out', fill:'forwards'});
+
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(),1100);
+    }
+}
+
+// === SINGLE HEART FLOAT ===
+function floatingHeart(x, y){
+    let e = document.createElement("div");
+    e.className = "floatingHeart";
+    e.innerText = "❤️";
+    e.style.left = (x + Math.random()*60 - 30) + "px";
+    e.style.top = (y + Math.random()*60 - 30) + "px";
+    e.style.fontSize = (Math.random()*25 + 20) + "px";
+    document.body.appendChild(e);
+    setTimeout(()=>e.remove(),20000);
+}
+</script>
+
+</body>
+</html>
