@@ -4,13 +4,12 @@
 <title>Question</title>
 
 <style>
-   
 body{
     text-align:center;
     font-family:Arial, sans-serif;
     margin:0;
     padding:0;
-    background:#ffc0cb; /* pinkish base */
+    background:#ffc0cb;
     overflow:hidden;
     transition: background 0.2s;
 }
@@ -69,30 +68,75 @@ button{
     0%{transform:translateY(0); opacity:1;}
     100%{transform:translateY(-200px); opacity:0;}
 }
+
+/* CREDIT TEXT */
+#creditText{
+  position:fixed;
+  left:50%;
+  bottom:-120px;
+  transform:translateX(-50%);
+  font-size:42px;
+  font-weight:bold;
+  color:#ff66b2;
+  opacity:0;
+  z-index:9999;
+
+  text-shadow:
+    0 0 5px #ff66b2,
+    0 0 15px #ff66b2,
+    0 0 30px #ff99cc,
+    0 0 60px #ffb3d9;
+}
+
+@keyframes riseUp{
+  0%{ bottom:-120px; opacity:0; }
+  25%{ opacity:1; }
+  100%{
+    bottom:50%;
+    transform:translate(-50%,50%);
+    opacity:1;
+  }
+}
+
+.sparkle{
+  position:fixed;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:pink;
+  pointer-events:none;
+  animation: sparkleFade 1s linear forwards;
+}
+
+@keyframes sparkleFade{
+  to{ transform:scale(0); opacity:0; }
+}
 </style>
 </head>
 
 <body>
 
 <div id="content">
-    <h1>Hold on.. before anything</h1>
-    <h2>so… can you afford to keep me full tomorrow?</h2>
-    <h3>(dare to say no..!)</h3>
+<h1>Hold on.. before anything</h1>
+<h2>so… can you afford to keep me full tomorrow?</h2>
+<h3>(dare to say no..!)</h3>
 
-    <div id="msg"></div>
+<div id="msg"></div>
 
-    <button id="yes">YES</button>
-    <button id="no">NO</button>
+<button id="yes">YES</button>
+<button id="no">NO</button>
 </div>
 
-<!-- AUDIO FILES -->
+<div id="creditText">Presents by : RITU CHAUDHARY</div>
+
+<!-- AUDIO -->
 <audio id="boing" src="https://www.soundjay.com/button/beep-07.wav"></audio>
 <audio id="cheer" src="https://www.soundjay.com/human/cheer-01.wav"></audio>
 <audio id="pop" src="https://www.soundjay.com/button/button-16.wav"></audio>
 <audio id="birthdaySong" src="birthday.mp3" preload="auto" loop></audio>
 
 <script>
-// === ELEMENTS ===
+// ELEMENTS
 const contentDiv = document.getElementById("content");
 const yes = document.getElementById("yes");
 const noBtn = document.getElementById("no");
@@ -102,14 +146,14 @@ const cheer = document.getElementById("cheer");
 const pop = document.getElementById("pop");
 const birthdaySong = document.getElementById("birthdaySong");
 
-// === NO BUTTON DODGE ===
+// NO BUTTON DODGE
 const messages=[
-    "Are you sure? 🤨",
-    "Think again 😏",
-    "Wrong choice 😌",
-    "You can’t catch me 😜",
-    "No option disabled 😆",
-    "Try harder 😂"
+"Are you sure? 🤨",
+"Think again 😏",
+"Wrong choice 😌",
+"You can’t catch me 😜",
+"No option disabled 😆",
+"Try harder 😂"
 ];
 
 function moveNoButton(e){
@@ -139,7 +183,7 @@ function moveNoButton(e){
 noBtn.addEventListener("mousemove", moveNoButton);
 noBtn.addEventListener("touchstart", moveNoButton);
 
-// === YES BUTTON SCALE ===
+// YES BUTTON SCALE
 let scale = 1;
 yes.addEventListener("mouseover", ()=>{
     scale += 0.15;
@@ -150,156 +194,102 @@ yes.addEventListener("mouseleave", ()=>{
     yes.style.transform = `scale(1)`;
 });
 
-// === BACKGROUND REACT ===
+// BACKGROUND REACT
 document.addEventListener("mousemove",(e)=>{
     let x = e.clientX/window.innerWidth*100;
     let y = e.clientY/window.innerHeight*100;
-    document.body.style.background = `rgb(${255}, ${150+x/2}, ${180+y/2})`;
+    document.body.style.background = `rgb(255, ${150+x/2}, ${180+y/2})`;
 });
 
-// === YES CLICK CELEBRATION ===
+// YES CLICK
 yes.addEventListener("click", ()=>{
-    cheer.play();             
-    birthdaySong.play();      // now will loop and continue
+    cheer.play();
+    birthdaySong.play();
+
     contentDiv.innerHTML=`
         <h1>HAPPY BIRTHDYYYY! 🥳✨</h1>
         <h2>Don't forget....I expect nothing less than 'EXTRA'</h2>
     `;
-    partyBlastTriple(50);     
+
+    partyBlastTriple(50);
+
+    // SHOW CREDIT AFTER HEARTS FINISH
+    setTimeout(()=>{
+        const text=document.getElementById("creditText");
+        text.style.animation="riseUp 4s ease-out forwards";
+
+        let sparkleInterval=setInterval(()=>{
+            const rect=text.getBoundingClientRect();
+
+            const s=document.createElement("div");
+            s.className="sparkle";
+            s.style.left=rect.left+rect.width/2+(Math.random()*80-40)+"px";
+            s.style.top=rect.bottom+"px";
+
+            document.body.appendChild(s);
+            setTimeout(()=>s.remove(),1000);
+        },120);
+
+        setTimeout(()=>clearInterval(sparkleInterval),4000);
+
+    },23000);
 });
 
-// === TRIPLE PARTY POPPERS ===
+// BLASTS
 function partyBlastTriple(count){
     for(let i=0;i<count;i++){
-        let x = Math.random()*window.innerWidth*0.9 + window.innerWidth*0.05;
-        let y = Math.random()*window.innerHeight*0.5 + window.innerHeight*0.1;
+        let x=Math.random()*window.innerWidth*0.9+window.innerWidth*0.05;
+        let y=Math.random()*window.innerHeight*0.5+window.innerHeight*0.1;
 
-        for(let blast=0; blast<3; blast++){
+        for(let blast=0;blast<3;blast++){
             setTimeout(()=>{
                 pop.play();
-                singleBlast(x, y);
-                setTimeout(()=>floatingHeart(x, y), 2000);
-            }, blast*500);
+                singleBlast(x,y);
+                setTimeout(()=>floatingHeart(x,y),2000);
+            },blast*500);
         }
     }
 }
 
-// === SINGLE BLAST CONFETTI ===
-function singleBlast(x, y){
+// CONFETTI
+function singleBlast(x,y){
     for(let j=0;j<20;j++){
-        let c = document.createElement("div");
+        let c=document.createElement("div");
         c.style.position="fixed";
         c.style.width="10px";
         c.style.height="10px";
-        c.style.background = `hsl(${Math.random()*360},100%,50%)`;
-        c.style.left = x + "px";
-        c.style.top = y + "px";
-        c.style.borderRadius = "50%";
+        c.style.background=`hsl(${Math.random()*360},100%,50%)`;
+        c.style.left=x+"px";
+        c.style.top=y+"px";
+        c.style.borderRadius="50%";
 
-        let angle = Math.random()*2*Math.PI;
-        let speed = Math.random()*15 + 5;
-        let dx = Math.cos(angle)*speed;
-        let dy = Math.sin(angle)*speed;
+        let angle=Math.random()*2*Math.PI;
+        let speed=Math.random()*15+5;
+        let dx=Math.cos(angle)*speed;
+        let dy=Math.sin(angle)*speed;
 
         c.animate([
-            {transform:`translate(0px,0px)`},
-            {transform:`translate(${dx*10}px, ${dy*10}px)`, opacity:0}
-        ], {duration:1000, easing:'ease-out', fill:'forwards'});
+            {transform:`translate(0,0)`},
+            {transform:`translate(${dx*10}px,${dy*10}px)`,opacity:0}
+        ],{duration:1000,easing:'ease-out',fill:'forwards'});
 
         document.body.appendChild(c);
         setTimeout(()=>c.remove(),1100);
     }
 }
 
-// === SINGLE HEART FLOAT ===
-function floatingHeart(x, y){
-    let e = document.createElement("div");
-    e.className = "floatingHeart";
-    e.innerText = "❤️";
-    e.style.left = (x + Math.random()*60 - 30) + "px";
-    e.style.top = (y + Math.random()*60 - 30) + "px";
-    e.style.fontSize = (Math.random()*25 + 20) + "px";
+// HEARTS
+function floatingHeart(x,y){
+    let e=document.createElement("div");
+    e.className="floatingHeart";
+    e.innerText="❤️";
+    e.style.left=(x+Math.random()*60-30)+"px";
+    e.style.top=(y+Math.random()*60-30)+"px";
+    e.style.fontSize=(Math.random()*25+20)+"px";
     document.body.appendChild(e);
     setTimeout(()=>e.remove(),20000);
 }
 </script>
-    <div id="creditText">Presents by : RITU CHAUDHARY</div>
-
-<style>
-#creditText{
-  position:fixed;
-  left:50%;
-  bottom:-120px;
-  transform:translateX(-50%);
-  font-size:42px;
-  font-weight:bold;
-  color:#ff66b2;
-  opacity:0;
-  z-index:9999;
-
-  text-shadow:
-    0 0 5px #ff66b2,
-    0 0 15px #ff66b2,
-    0 0 30px #ff99cc,
-    0 0 60px #ffb3d9;
-
-  animation: riseUp 4s ease-out forwards;
-}
-
-@keyframes riseUp{
-  0%{
-    bottom:-120px;
-    opacity:0;
-  }
-  25%{
-    opacity:1;
-  }
-  100%{
-    bottom:50%;
-    transform:translate(-50%,50%);
-    opacity:1;
-  }
-}
-
-.sparkle{
-  position:fixed;
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:pink;
-  pointer-events:none;
-  animation: sparkleFade 1s linear forwards;
-}
-
-@keyframes sparkleFade{
-  to{
-    transform:scale(0);
-    opacity:0;
-  }
-}
-</style>
-
-<script>
-const text = document.getElementById("creditText");
-
-let sparkleInterval = setInterval(()=>{
-  const rect = text.getBoundingClientRect();
-
-  const s = document.createElement("div");
-  s.className="sparkle";
-  s.style.left = rect.left + rect.width/2 + (Math.random()*80-40) + "px";
-  s.style.top = rect.bottom + "px";
-
-  document.body.appendChild(s);
-  setTimeout(()=>s.remove(),1000);
-},120);
-
-// stop sparkles after animation finishes
-setTimeout(()=>clearInterval(sparkleInterval),4000);
-</script>
 
 </body>
-
 </html>
-
-
