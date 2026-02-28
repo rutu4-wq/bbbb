@@ -4,6 +4,49 @@
 <title>Question</title>
 
 <style>
+    #creditText{
+  position: fixed;
+  bottom: -100px;
+  width: 100%;
+  text-align: center;
+  font-size: 42px;
+  font-weight: bold;
+  font-family: cursive;
+  color: #ff69b4;
+  animation: floatUp 5s ease forwards, glow 1.5s infinite alternate;
+  animation-delay: 20s, 20s;
+}
+
+@keyframes floatUp{
+  from{ bottom:-100px; opacity:0; }
+  to{ bottom:50%; opacity:1; }
+}
+
+@keyframes glow{
+  from{
+    text-shadow:0 0 10px #ff69b4,0 0 20px #ff85c1,0 0 30px #ffc0cb;
+  }
+  to{
+    text-shadow:0 0 20px #ff1493,0 0 40px #ff69b4,0 0 60px #ffb6c1;
+  }
+}
+
+.sparkle{
+  position: fixed;
+  width:6px;
+  height:6px;
+  background:white;
+  border-radius:50%;
+  pointer-events:none;
+  animation:sparkleFade 1s linear forwards;
+}
+
+@keyframes sparkleFade{
+  to{
+    transform:translateY(-40px) scale(0);
+    opacity:0;
+  }
+}
 body{
     text-align:center;
     font-family:Arial, sans-serif;
@@ -221,7 +264,26 @@ function floatingHeart(x, y){
     document.body.appendChild(e);
     setTimeout(()=>e.remove(),20000);
 }
+    <div id="creditText">Presents by: RITU CHAUHDARY</div>
+</script>
+    <script>
+setTimeout(()=>{
+  const text=document.getElementById("creditText");
+
+  setInterval(()=>{
+    const sparkle=document.createElement("div");
+    sparkle.className="sparkle";
+
+    const rect=text.getBoundingClientRect();
+    sparkle.style.left=rect.left+Math.random()*rect.width+"px";
+    sparkle.style.top=rect.top+Math.random()*rect.height+"px";
+
+    document.body.appendChild(sparkle);
+    setTimeout(()=>sparkle.remove(),1000);
+  },150);
+},20000);
 </script>
 
 </body>
+
 </html>
