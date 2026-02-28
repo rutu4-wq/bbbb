@@ -4,49 +4,7 @@
 <title>Question</title>
 
 <style>
-    #creditText{
-  position: fixed;
-  bottom: -100px;
-  width: 100%;
-  text-align: center;
-  font-size: 42px;
-  font-weight: bold;
-  font-family: cursive;
-  color: #ff69b4;
-  animation: floatUp 5s ease forwards, glow 1.5s infinite alternate;
-  animation-delay: 20s, 20s;
-}
-
-@keyframes floatUp{
-  from{ bottom:-100px; opacity:0; }
-  to{ bottom:50%; opacity:1; }
-}
-
-@keyframes glow{
-  from{
-    text-shadow:0 0 10px #ff69b4,0 0 20px #ff85c1,0 0 30px #ffc0cb;
-  }
-  to{
-    text-shadow:0 0 20px #ff1493,0 0 40px #ff69b4,0 0 60px #ffb6c1;
-  }
-}
-
-.sparkle{
-  position: fixed;
-  width:6px;
-  height:6px;
-  background:white;
-  border-radius:50%;
-  pointer-events:none;
-  animation:sparkleFade 1s linear forwards;
-}
-
-@keyframes sparkleFade{
-  to{
-    transform:translateY(-40px) scale(0);
-    opacity:0;
-  }
-}
+   
 body{
     text-align:center;
     font-family:Arial, sans-serif;
@@ -264,26 +222,84 @@ function floatingHeart(x, y){
     document.body.appendChild(e);
     setTimeout(()=>e.remove(),20000);
 }
-    <div id="creditText">Presents by: RITU CHAUHDARY</div>
+</script>
+    <div id="creditText">Presents by : RITU CHAUDHARY</div>
 
-setTimeout(()=>{
-  const text=document.getElementById("creditText");
+<style>
+#creditText{
+  position:fixed;
+  left:50%;
+  bottom:-120px;
+  transform:translateX(-50%);
+  font-size:42px;
+  font-weight:bold;
+  color:#ff66b2;
+  opacity:0;
+  z-index:9999;
 
-  setInterval(()=>{
-    const sparkle=document.createElement("div");
-    sparkle.className="sparkle";
+  text-shadow:
+    0 0 5px #ff66b2,
+    0 0 15px #ff66b2,
+    0 0 30px #ff99cc,
+    0 0 60px #ffb3d9;
 
-    const rect=text.getBoundingClientRect();
-    sparkle.style.left=rect.left+Math.random()*rect.width+"px";
-    sparkle.style.top=rect.top+Math.random()*rect.height+"px";
+  animation: riseUp 4s ease-out forwards;
+}
 
-    document.body.appendChild(sparkle);
-    setTimeout(()=>sparkle.remove(),1000);
-  },150);
-},20000);
+@keyframes riseUp{
+  0%{
+    bottom:-120px;
+    opacity:0;
+  }
+  25%{
+    opacity:1;
+  }
+  100%{
+    bottom:50%;
+    transform:translate(-50%,50%);
+    opacity:1;
+  }
+}
+
+.sparkle{
+  position:fixed;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:pink;
+  pointer-events:none;
+  animation: sparkleFade 1s linear forwards;
+}
+
+@keyframes sparkleFade{
+  to{
+    transform:scale(0);
+    opacity:0;
+  }
+}
+</style>
+
+<script>
+const text = document.getElementById("creditText");
+
+let sparkleInterval = setInterval(()=>{
+  const rect = text.getBoundingClientRect();
+
+  const s = document.createElement("div");
+  s.className="sparkle";
+  s.style.left = rect.left + rect.width/2 + (Math.random()*80-40) + "px";
+  s.style.top = rect.bottom + "px";
+
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),1000);
+},120);
+
+// stop sparkles after animation finishes
+setTimeout(()=>clearInterval(sparkleInterval),4000);
 </script>
 
 </body>
 
 </html>
+
 
